@@ -4,14 +4,11 @@ format: html
 ---
 
 ```{r}
-#################################################
-## Stat 6560  Final Project
-## Autumn 2025
-#################################################
+
 
 library(MASS)   # load library MASS
 
-# read data files --------------------------------
+# read data files 
 
 data.7 <- read.csv("train.7.txt", header = F)
 data.7 <- as.matrix(data.7)
@@ -23,7 +20,7 @@ data.9 <- as.matrix(data.9)
 # > dim(data.9)
 # [1] 644 256
 
-# visualize the digit images ---------------------
+# visualize the digit images
 # note: each row corresponds to one observation or a digit
  
 # For example, pick the first observation of "7"
@@ -61,7 +58,7 @@ for (i in 1:5)
 
 par(mfrow=c(1,1))
 
-# split data into a training set and a test set --------------
+# split data into a training set and a test set 
 
 data.7.train <- data.7[1:400,]
 data.7.test <- data.7[401:645,]
@@ -82,13 +79,7 @@ data.test <- rbind(data.7.test, data.9.test)
 label.test <- c(rep(7,245), rep(9,244)) # class labels for test data
 
 
-# PCA  -----------------------
-
-
-
-
-
-# LDA  -----------------------
+# LDA  
 col.sd <- apply(data.train, 2, sd)  # compute columnwise standard deviation
 # > sum(col.sd==0)   # 18 variables with zero SD!
 # [1] 18
@@ -123,12 +114,12 @@ evals.7 <- (pca.7$sdev)^2  # Eigenvalues (variances)
 evecs.7 <- pca.7$rotation  # Eigenvectors (loadings/directions)
 scores.7 <- pca.7$x        # PC scores
 
-# 2. Visualize the Average Image -----------------------------------------------
+# 2. Visualize the Average Image 
 par(mfrow=c(1,1))
 digit.image(mu.7)
 title(main = "Average Image of '7'")
 
-# 3. Visualize Synthetic Images (Mean + c * Eigenvector) -----------------------
+# 3. Visualize Synthetic Images (Mean + c * Eigenvector)
 # Instruction: Visualize variation along first few PCs using x_bar + c * e
 
 # Helper function to plot the sequence of variations
@@ -148,7 +139,7 @@ plot_pc_variation <- function(pc_index, sd_val, mean_vec, eigen_mat) {
 par(mfrow=c(5,5), mar=c(0.1, 0.1, 0.1, 0.1))
 for(i in 1:5) { plot_pc_variation(i, pca.7$sdev[i], mu.7, evecs.7) }
 
-# 4. Identify Typical and Atypical Images --------------------------------------
+# 4. Identify Typical and Atypical Images 
 # "Typical" = close to the mean (scores near 0)
 # "Atypical" = far from the mean (high magnitude scores)
 
@@ -174,14 +165,11 @@ for(i in idx_atypical) {
 }
 mtext("Atypical '7's", side=3, line=-15, outer=TRUE)
 
-# 5. Adequacy of Representation (Scree Plot) -----------------------------------
-# ==============================================================================
+# 5. Adequacy of Representation (Scree Plot) 
 # Better Scree Plot for Part 1(a) - Determining Adequacy
-# ==============================================================================
+# 5. Adequacy of Representation (Dual Scree Plots) 
 
-# 5. Adequacy of Representation (Dual Scree Plots) -----------------------------
-
-# --- Plot A: The Elbow Method (Visual Structure) ---
+# Plot A: The Elbow Method (Visual Structure) 
 # We look at the first 30 components to see the "bend" clearly
 par(mfrow=c(1,2)) # Split screen: Left = Bar, Right = Line
 
@@ -203,7 +191,7 @@ grid()
 
 ```{r}
 #PCA PART 1B 
-# 1. Apply PCA on data.9.train -------------------------------------------------
+# 1. Apply PCA on data.9.train 
 # Ensure you are using the '9' training data here
 pca.9 <- prcomp(data.9.train, center = TRUE, scale. = FALSE)
 
@@ -213,12 +201,12 @@ evals.9 <- (pca.9$sdev)^2  # Eigenvalues
 evecs.9 <- pca.9$rotation  # Eigenvectors
 scores.9 <- pca.9$x        # PC scores
 
-# 2. Visualize the Average Image of "9" ----------------------------------------
+# 2. Visualize the Average Image of "9"
 par(mfrow=c(1,1))
 digit.image(mu.9)
 title(main = "Average Image of '9'")
 
-# 3. Visualize Synthetic Images (Mean + c * Eigenvector) -----------------------
+# 3. Visualize Synthetic Images (Mean + c * Eigenvector) 
 # Re-using the plot_pc_variation function we defined in Part 1(a)
 
 par(mfrow=c(5,5), mar=c(0.1, 0.1, 0.1, 0.1), oma=c(0, 2, 2, 0)) 
@@ -239,7 +227,7 @@ for (i in 1:5) {
 mtext("Variations along PC 1 to 5 (Digit 9)", side=3, line=0.5, outer=TRUE, cex=1.2)
 
 
-# 4. Identify Typical and Atypical "9"s ----------------------------------------
+# 4. Identify Typical and Atypical "9"s 
 # Calculate distance from center for '9's
 dist_9 <- sqrt(scores.9[,1]^2 + scores.9[,2]^2)
 
@@ -263,7 +251,7 @@ for(i in idx_atypical_9) {
 mtext("Atypical '9's", side=3, line=-15, outer=TRUE)
 
 
-# 5. Adequacy (Scree Plot for 9) -----------------------------------------------
+# 5. Adequacy (Scree Plot for 9) 
 par(mfrow=c(1,2)) # Split screen: Left = Bar, Right = Line
 
 # 1. Bar Plot (Variances)
@@ -284,7 +272,7 @@ grid()
 
 ```{r}
 #PCA PART 1C 
-# 1. Apply PCA on the Combined Data (data.train) -------------------------------
+# 1. Apply PCA on the Combined Data (data.train) 
 # This dataset has 800 rows (400 "7"s and 400 "9"s)
 pca.combined <- prcomp(data.train, center = TRUE, scale. = FALSE)
 
@@ -295,14 +283,14 @@ scores.comb <- pca.combined$x        # Scores for each image
 evals.comb <- pca.combined$sdev^2    # Eigenvalues (Variances)
 
 
-# 2. Visualize the Average Image -----------------------------------------------
+# 2. Visualize the Average Image 
 # This will look like a mix of a 7 and a 9
 par(mfrow=c(1,1))
 digit.image(mu.comb)
 title("Average Image of Combined Data (7 & 9)")
 
 
-# 3. Visualize Synthetic Variations (5x5 Grid) ---------------------------------
+# 3. Visualize Synthetic Variations (5x5 Grid) 
 # Shows how the "average blob" morphs into specific digits along PC axes
 par(mfrow=c(5,5), mar=c(0.1, 0.1, 0.1, 0.1), oma=c(0, 2, 2, 0)) 
 
@@ -317,7 +305,7 @@ for (i in 1:5) {
 mtext("Variations along PC 1-5 (Combined)", side=3, line=0.5, outer=TRUE)
 
 
-# 4. Identify Typical and Atypical Images --------------------------------------
+# 4. Identify Typical and Atypical Images 
 # "Typical" = Closest to the hybrid mean (Ambiguous)
 # "Atypical" = Furthest from the hybrid mean (Distinct 7s or 9s)
 
@@ -343,7 +331,7 @@ for(i in idx_atypical_c) {
 mtext("Atypical (Extreme)", side=3, line=-15, outer=TRUE)
 
 
-# 5. Discrimination Scatterplot (PC1 vs PC2) -----------------------------------
+# 5. Discrimination Scatterplot (PC1 vs PC2) 
 # This is the "In addition" requirement - crucial for seeing separation
 
 # Define colors: Red for 7, Blue for 9
@@ -365,9 +353,9 @@ legend("topright", legend=c("Digit 7", "Digit 9"),
 grid()
 
 
-# 6. Adequacy (Dual Scree Plots) -----------------------------------------------
+# 6. Adequacy (Dual Scree Plots)
 
-# --- Plot A: The Elbow Method ---
+# Plot A: The Elbow Method 
 par(mfrow=c(1,2)) 
 barplot(evals.comb[1:30], main="Scree (Var) - Combined", names.arg=1:30, 
         col="gray", border=NA, ylab="Variance", xlab="PC #")
@@ -379,16 +367,16 @@ grid()
 
 ```{r}
 #LDA PART 2A 
-# 1. Feature Selection (Filtering Low Variance Pixels) -------------------------
+# 1. Feature Selection (Filtering Low Variance Pixels) 
 # As per sample code: calculate SD and keep only pixels with SD > 0.2
 col.sd <- apply(data.train, 2, sd)
 col.ind <- (1:256)[col.sd > 0.2] 
 
-# 2. Train LDA Model -----------------------------------------------------------
+# 2. Train LDA Model 
 # We use only the columns in 'col.ind'
 lda.79 <- lda(data.train[, col.ind], grouping = label.train)
 
-# 3. Visualize the LDA Coefficients --------------------------------------------
+# 3. Visualize the LDA Coefficients 
 # Reconstruct the 256-pixel image from the scaling factors
 LD1_vector <- rep(0, 256)
 LD1_vector[col.ind] <- lda.79$scaling
@@ -402,9 +390,8 @@ title("LDA Coefficient (Signed)")
 digit.image(abs(LD1_vector))
 title("LDA Coefficient (Magnitude)")
 
-# ==============================================================================
+
 # VISUAL COMPARISON: LDA vs. PCA (Part 2a Discussion)
-# ==============================================================================
 
 # 1. Get the LDA Vector (from Part 2a)
 # (Assuming you already ran lda.79 in the previous step)
@@ -428,7 +415,7 @@ digit.image(pca_vector)
 title("PCA Eigenvector 1\n(Best for Variation)")
 
 
-# 5. Calculate Error Rates (The "Evaluation" Step) -----------------------------
+# 5. Calculate Error Rates (The "Evaluation" Step)
 
 # --- A. Apparent Error Rate (Training Error) ---
 # Predict classes for the training data
@@ -460,7 +447,7 @@ cat("Test Error Rate (Test):", round(ter, 4), "\n")
 
 ```{r}
 #LDA PART 2B 
-# 1. Project the Test Data onto the PCA Space ----------------------------------
+# 1. Project the Test Data onto the PCA Space 
 # We already have scores for Training Data (scores.comb) from Part 1c.
 # We MUST project the Test Data using the SAME rotation/center from the Training PCA.
 # predict() handles this automatically for prcomp objects.
@@ -469,7 +456,7 @@ scores.train <- scores.comb                # Training Scores (800 rows)
 scores.test <- predict(pca.combined, newdata = data.test) # Test Scores (489 rows)
 
 
-# 2. LDA using only the First 2 PCs (Comparison Step) --------------------------
+# 2. LDA using only the First 2 PCs (Comparison Step)
 # This corresponds to the Scatterplot in Part 1(c)
 
 # Train LDA on just PC1 and PC2
@@ -483,7 +470,7 @@ ter.pca.2 <- mean(pred.test.pca.2 != label.test)
 cat("Test Error Rate (Using 2 PCs):", round(ter.pca.2, 4), "\n")
 
 
-# 3. Analyze Improvement: Loop through PC 2 to 50 ------------------------------
+# 3. Analyze Improvement: Loop through PC 2 to 50
 # Question: "Does the addition of subsequent PCs improve accuracy?"
 
 # Define the range of PCs to test (Start at 2, go up to 50)
@@ -505,7 +492,7 @@ for (i in 1:length(pc_range)) {
 }
 
 
-# 4. Plot the Error Trend ------------------------------------------------------
+# 4. Plot the Error Trend 
 par(mfrow=c(1,1))
 plot(pc_range, error_rates, 
      type="o", pch=19, col="blue",
@@ -528,11 +515,10 @@ min_error <- min(error_rates)
 best_k <- pc_range[which.min(error_rates)]
 cat("Minimum Test Error:", min_error, "achieved at", best_k, "PCs\n")
 
-# ==============================================================================
 # FINAL COMPARISON: Part 2(a) vs Part 2(b)
-# ==============================================================================
 
-# 1. Get Stats for Rule (a) - Raw Data -----------------------------------------
+
+# 1. Get Stats for Rule (a) - Raw Data
 # (Assuming variables 'aper' and 'ter' are stored from Part 2a code)
 # If not, just uncomment and manualy enter the numbers you got:
 # aper_raw <- 0.0088
@@ -541,7 +527,7 @@ aper_raw <- aper  # From Part 2(a)
 ter_raw <- ter    # From Part 2(a)
 
 
-# 2. Get Stats for Rule (b) - Optimal PCA Model --------------------------------
+# 2. Get Stats for Rule (b) - Optimal PCA Model 
 # We found the best 'k' (best_k) and minimum test error (min_error) in Part 2(b).
 # We just need to calculate the TRAINING error (APER) for that specific k to compare.
 
@@ -556,7 +542,7 @@ aper_pca <- mean(pred.train.best != label.train)
 ter_pca <- min_error
 
 
-# 3. Create the Comparison Table -----------------------------------------------
+# 3. Create the Comparison Table
 comparison_tab <- data.frame(
   Method = c("Rule (a): Raw Pixels (~182 vars)", paste("Rule (b): PCA (", best_k, " PCs)", sep="")),
   APER_Train = c(aper_raw, aper_pca),
@@ -567,7 +553,7 @@ comparison_tab <- data.frame(
 print(comparison_tab)
 
 
-# 4. (Optional) Visualize the Difference ---------------------------------------
+# 4. (Optional) Visualize the Difference 
 # A bar plot makes the "PCA wins" argument very visual
 barplot(as.matrix(comparison_tab[,2:3]), beside=TRUE,
         col=c("red", "blue"),
